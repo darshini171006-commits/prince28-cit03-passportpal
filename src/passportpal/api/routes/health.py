@@ -5,7 +5,7 @@ from passportpal.api.deps import SettingsDep, StoreDep
 router = APIRouter(tags=["health"])
 
 
-@router.get("/health")
+@router.api_route("/health", methods=["GET", "HEAD"])
 def health(settings: SettingsDep) -> dict[str, str]:
     """Liveness: is the process alive? Instant. Never touches the DB or the LLM."""
     return {"status": "ok", "app": settings.app_name, "env": settings.app_env}
