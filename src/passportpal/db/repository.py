@@ -28,12 +28,14 @@ def _value_candidates(value: str) -> list[Any]:
     """'10' in a URL may mean the number 10, the text '10', or an item in a list."""
     out: list[Any] = [value, [value]]
     lowered = value.lower()
+
     if lowered in ("true", "false"):
         out.append(lowered == "true")
     elif re.fullmatch(r"-?\d+", value):
         out.append(int(value))
     elif re.fullmatch(r"-?\d+\.\d+", value):
         out.append(float(value))
+
     return out
 
 
@@ -42,25 +44,43 @@ class DocumentRepository:
         self.session = session
 
     async def list(
-        self, *, q: str | None, filters: dict[str, str], limit: int, offset: int
+        self,
+        *,
+        q: str | None,
+        filters: dict[str, str],
+        limit: int,
+        offset: int,
     ) -> tuple[int, list[dict[str, Any]]]:
         stmt = select(Document)
+
         if q:
             like = f"%{q}%"
             stmt = stmt.where(
-                or_(Document.title.ilike(like), cast(Document.metadata_, Text).ilike(like))
+                or_(
+                    Document.title.ilike(like),
+                    cast(Document.metadata_, Text).ilike(like),
+                )
             )
+
         for key, value in filters.items():
-            # metadata @> '{"key": value}' uses the GIN index
             stmt = stmt.where(
-                or_(*(Document.metadata_.contains({key: v}) for v in _value_candidates(value)))
+                or_(
+                    *(
+                        Document.metadata_.contains({key: candidate})
+                        for candidate in _value_candidates(value)
+                    )
+                )
             )
+
         total = await self.session.scalar(select(func.count()).select_from(stmt.subquery()))
+
         rows = await self.session.scalars(
             stmt.order_by(Document.external_id).limit(limit).offset(offset)
         )
-        return total or 0, [to_dict(d) for d in rows]
+
+        return total or 0, [to_dict(doc) for doc in rows.all()]
 
     async def get(self, external_id: str) -> dict[str, Any] | None:
         doc = await self.session.scalar(select(Document).where(Document.external_id == external_id))
+
         return to_dict(doc) if doc else None
