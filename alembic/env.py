@@ -44,11 +44,25 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection) -> None:
-    """Run migrations using an active database connection."""
+    def include_object(
+        object_,
+        name,
+        type_,
+        reflected,
+        compare_to,
+    ):
+        # Ignore the PostgreSQL-only GIN index when using SQLite.
+        return not (
+            connection.dialect.name == "sqlite"
+            and type_ == "index"
+            and name == "ix_documents_metadata_gin"
+        )
+
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
         compare_type=True,
+        include_object=include_object,
     )
 
     with context.begin_transaction():

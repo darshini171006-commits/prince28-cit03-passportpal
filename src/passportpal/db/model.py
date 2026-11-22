@@ -4,6 +4,7 @@ from datetime import date, datetime
 from typing import Any
 
 from sqlalchemy import (
+    JSON,
     CheckConstraint,
     DateTime,
     ForeignKey,
@@ -45,7 +46,10 @@ class Document(Base):
 
     licence: Mapped[str | None] = mapped_column(String(200))
 
-    doc_type: Mapped[str] = mapped_column(String(50), server_default="record")
+    doc_type: Mapped[str] = mapped_column(
+        String(50),
+        server_default="record",
+    )
 
     published_on: Mapped[date | None]
 
@@ -53,8 +57,9 @@ class Document(Base):
 
     metadata_: Mapped[dict[str, Any]] = mapped_column(
         "metadata",
-        JSONB,
-        server_default=text("'{}'::jsonb"),
+        JSON().with_variant(JSONB, "postgresql"),
+        server_default=text("'{}'"),
+        nullable=False,
     )
 
     created_at: Mapped[datetime] = mapped_column(
@@ -75,7 +80,6 @@ class Document(Base):
 
     __table_args__ = (
         Index("ix_documents_doc_type", "doc_type"),
-        # GIN index for faster JSONB metadata queries
         Index(
             "ix_documents_metadata_gin",
             "metadata",
@@ -83,7 +87,7 @@ class Document(Base):
             postgresql_ops={
                 "metadata": "jsonb_path_ops",
             },
-        ),
+        ).ddl_if(dialect="postgresql"),
     )
 
 
@@ -101,7 +105,9 @@ class Page(Base):
 
     text: Mapped[str] = mapped_column(Text)
 
-    document: Mapped["Document"] = relationship(back_populates="pages")
+    document: Mapped["Document"] = relationship(
+        back_populates="pages",
+    )
 
     __table_args__ = (
         UniqueConstraint(
