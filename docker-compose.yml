@@ -6,7 +6,7 @@ services:
     image: pgvector/pgvector:pg17
     environment:
       POSTGRES_USER: app
-      POSTGRES_PASSWORD: app
+      POSTGRES_PASSWORD: app # pragma: allowlist secret
       POSTGRES_DB: app
     ports:
       - "5433:5432"
@@ -34,7 +34,7 @@ services:
     command: ["alembic", "upgrade", "head"]
     environment: &app-env
       APP_ENV: local
-      DATABASE_URL: postgresql://app:app@db:5432/app
+      DATABASE_URL: postgresql://app:app@db:5432/app # pragma: allowlist secret
     depends_on:
       db:
         condition: service_healthy
