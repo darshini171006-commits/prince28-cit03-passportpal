@@ -1,13 +1,12 @@
-.venv/
-__pycache__/
-*.py[cod]
-.pytest_cache/
-.ruff_cache/
-.coverage
-htmlcov/
+# Environment secrets
 .env
 .env.*
 !.env.example
-app.db
-*.sqlite
-*.sqlite3
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Virtual environment
+.venv/

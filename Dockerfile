@@ -46,6 +46,9 @@ COPY --from=builder --chown=app:app /app/src ./src
 COPY --from=builder --chown=app:app /app/migrations ./migrations
 COPY --from=builder --chown=app:app /app/data ./data
 
+# Copy prompts folder
+COPY --from=builder --chown=app:app /app/prompts ./prompts
+
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1

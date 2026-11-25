@@ -8,10 +8,10 @@ from passportpal.config import Settings
 def make_engine(settings: Settings) -> AsyncEngine:
     return create_async_engine(
         settings.database_url,
-        pool_size=settings.db_pool_size,  # connections kept open
-        max_overflow=settings.db_max_overflow,  # extra ones allowed under load
-        pool_pre_ping=True,  # test a connection before using it (free DBs sleep)
-        pool_recycle=300,  # replace connections older than 5 minutes
+        pool_size=settings.db_pool_size,
+        max_overflow=settings.db_max_overflow,
+        pool_pre_ping=True,
+        pool_recycle=300,
     )
 
 
