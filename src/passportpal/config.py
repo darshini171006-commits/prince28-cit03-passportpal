@@ -8,13 +8,25 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     app_name: str = "passportpal"
-    # No default on purpose: if APP_ENV is missing, the app refuses to start (fail fast).
     app_env: Literal["local", "ci", "production"]
+
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
+
     data_file: Path = Path("data/sample_records.json")
+
+    # Database settings
+    database_url: str = (
+        "postgresql+psycopg://app:app@localhost:5433/app"  # pragma: allowlist secret
+    )
+    db_pool_size: int = 5
+    db_max_overflow: int = 10
 
 
 @lru_cache

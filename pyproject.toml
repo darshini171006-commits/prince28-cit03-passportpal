@@ -9,10 +9,13 @@ dependencies = [
     "alembic>=1.20.1",
     "fastapi>=0.163.1",
     "httpx>=0.28.1",
+    "pdf2image>=1.17.0",
+    "pillow>=13.0.0",
     "protego>=0.7.0",
     "psycopg[binary]>=3.3.9",
     "pydantic-settings>=2.16.3",
     "pypdf>=7.1.1",
+    "pytesseract>=0.3.13",
     "uvicorn[standard]>=0.54.0",
 ]
 
