@@ -1,3 +1,8 @@
+import asyncio
+import sys
+
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 import pytest
 from fastapi.testclient import TestClient
 
@@ -11,6 +16,7 @@ SAMPLE = [
     {"id": "001", "title": "Alpha guideline", "year": 2023, "kind": "guideline"},
     {"id": "002", "title": "Beta circular", "year": 2024, "kind": "circular"},
     {"id": "003", "title": "Gamma notice", "year": 2025, "kind": "circular"},
+    {"id": "PP001", "title": "Aarav passport guideline", "year": 2025, "kind": "guideline"},
 ]
 
 

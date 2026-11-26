@@ -1,10 +1,10 @@
 """llm_calls: every model call is written to a real Postgres and added up per day."""
 
-from passportpal.db.models import LlmCall
 from sqlalchemy import func, select
 
 from passportpal.config import Settings
 from passportpal.db.llm_calls import UsageRepository, make_recorder
+from passportpal.db.model import LlmCall
 from passportpal.db.session import make_engine, make_sessionmaker
 from passportpal.llm.gateway import FakeLLM, LLMError, LLMGateway
 
