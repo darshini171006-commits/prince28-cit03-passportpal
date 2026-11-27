@@ -8,6 +8,3 @@ htmlcov/
 .env
 .env.*
 !.env.example
-app.db
-*.sqlite
-*.sqlite3

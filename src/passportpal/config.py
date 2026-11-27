@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     data_file: Path = Path("data/sample_records.json")
 
+    # The commit this image was built from. CI sets it (Dockerfile ARG GIT_SHA).
+    git_sha: str = "dev"
+
 
 @lru_cache
 def get_settings() -> Settings:
