@@ -1,0 +1,20 @@
+{"id":"Q01","question":"I am applying for a passport for the first time.","expected":"new_passport"}
+{"id":"Q02","question":"How can I get a fresh passport for myself?","expected":"new_passport"}
+{"id":"Q03","question":"What documents are needed for a new passport application?","expected":"new_passport"}
+{"id":"Q04","question":"I want to apply for my first Indian passport.","expected":"new_passport"}
+{"id":"Q05","question":"My passport expires next month. How do I renew it?","expected":"renewal"}
+{"id":"Q06","question":"How can I reissue my expired passport?","expected":"renewal"}
+{"id":"Q07","question":"My passport is about to expire. What is the renewal process?","expected":"renewal"}
+{"id":"Q08","question":"I need to renew my passport because it has expired.","expected":"renewal"}
+{"id":"Q09","question":"I lost my passport while travelling. What should I do?","expected":"lost_or_damaged"}
+{"id":"Q10","question":"My passport was stolen. How can I get another one?","expected":"lost_or_damaged"}
+{"id":"Q11","question":"My passport got wet and the pages are damaged.","expected":"lost_or_damaged"}
+{"id":"Q12","question":"I cannot find my passport. How do I report it?","expected":"lost_or_damaged"}
+{"id":"Q13","question":"I want to apply for a passport for my five-year-old child.","expected":"minor_passport"}
+{"id":"Q14","question":"What documents are required for my newborn baby's passport?","expected":"minor_passport"}
+{"id":"Q15","question":"Can a 12-year-old child apply for a passport?","expected":"minor_passport"}
+{"id":"Q16","question":"How do I apply for a passport for my daughter?","expected":"minor_passport"}
+{"id":"Q17","question":"What is the capital of France?","expected":"other"}
+{"id":"Q18","question":"Explain how a computer network works.","expected":"other"}
+{"id":"Q19","question":"Can you suggest a healthy breakfast?","expected":"other"}
+{"id":"Q20","question":"Write a Java program to sort an array.","expected":"other"}
