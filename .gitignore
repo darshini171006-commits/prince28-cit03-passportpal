@@ -1,11 +1,11 @@
 .venv/
-
 __pycache__/
-*.pyc
-
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+app.db
 .env
 .env.*
 !.env.example
-
-.coverage
-app.db
