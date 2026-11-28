@@ -31,10 +31,13 @@ async def get_repo(
 
 
 async def check_db(request: Request) -> bool:
-    """Can we run SELECT 1 within 2 seconds?"""
+    """Check whether the database responds to SELECT 1 within 2 seconds."""
     try:
         async with request.app.state.engine.connect() as conn:
-            await asyncio.wait_for(conn.execute(text("SELECT 1")), timeout=2)
+            await asyncio.wait_for(
+                conn.execute(text("SELECT 1")),
+                timeout=2,
+            )
         return True
     except Exception:
         return False

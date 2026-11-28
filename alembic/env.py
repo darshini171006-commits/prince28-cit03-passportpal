@@ -1,5 +1,7 @@
+"""Alembic migration environment for PassportPal."""
+
 import asyncio
-import sys
+import selectors
 from logging.config import fileConfig
 
 from sqlalchemy import pool
@@ -12,10 +14,6 @@ from passportpal.db.url import to_asyncpg_url
 
 config = context.config
 
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
-
-# Load database URL from project settings
 settings = get_settings()
 database_url = to_asyncpg_url(settings.database_url)
 
@@ -24,7 +22,9 @@ config.set_main_option(
     database_url.replace("%", "%%"),
 )
 
-# Import all SQLAlchemy models through Base
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
 target_metadata = Base.metadata
 
 
@@ -66,10 +66,10 @@ async def run_async_migrations() -> None:
 
 
 def run_migrations_online() -> None:
-    if sys.platform == "win32":
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-    asyncio.run(run_async_migrations())
+    asyncio.run(
+        run_async_migrations(),
+        loop_factory=lambda: asyncio.SelectorEventLoop(selectors.SelectSelector()),
+    )
 
 
 if context.is_offline_mode():
