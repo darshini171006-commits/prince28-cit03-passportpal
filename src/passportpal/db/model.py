@@ -11,26 +11,33 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    MetaData,
     Numeric,
     String,
     Text,
     UniqueConstraint,
     func,
 )
-from sqlalchemy import (
-    text as sql_text,
-)
+from sqlalchemy import text as sql_text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-# Supports SQLite for local tests and PostgreSQL JSONB in production.
+NAMING = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
+}
+
+# SQLite-compatible JSON for tests and PostgreSQL JSONB in production.
 json_type = JSON().with_variant(JSONB(), "postgresql")
 
 
 class Base(DeclarativeBase):
     """Base class for all database models."""
 
-    pass
+    metadata = MetaData(naming_convention=NAMING)
 
 
 class Document(Base):
@@ -40,7 +47,11 @@ class Document(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    external_id: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    external_id: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+        unique=True,
+    )
 
     title: Mapped[str] = mapped_column(Text, nullable=False)
 
@@ -48,11 +59,19 @@ class Document(Base):
 
     licence: Mapped[str | None] = mapped_column(String(200))
 
-    doc_type: Mapped[str] = mapped_column(String(50), nullable=False, server_default="record")
+    doc_type: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        server_default="record",
+    )
 
     published_on: Mapped[date | None] = mapped_column(Date)
 
-    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    sha256: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+        index=True,
+    )
 
     metadata_: Mapped[dict[str, Any]] = mapped_column(
         "metadata",
@@ -71,6 +90,7 @@ class Document(Base):
         DateTime(timezone=True),
         nullable=False,
         server_default=func.now(),
+        onupdate=func.now(),
     )
 
     pages: Mapped[list["Page"]] = relationship(
@@ -80,12 +100,7 @@ class Document(Base):
     )
 
     __table_args__ = (
-        UniqueConstraint(
-            "external_id",
-            name="uq_documents_external_id",
-        ),
         Index("ix_documents_doc_type", "doc_type"),
-        Index("ix_documents_sha256", "sha256"),
         Index(
             "ix_documents_metadata_gin",
             "metadata",
@@ -103,12 +118,9 @@ class Page(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
     document_id: Mapped[int] = mapped_column(
-        ForeignKey(
-            "documents.id",
-            ondelete="CASCADE",
-            name="fk_pages_document_id_documents",
-        ),
+        ForeignKey("documents.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
 
     page_no: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -124,16 +136,15 @@ class Page(Base):
     document: Mapped["Document"] = relationship(back_populates="pages")
 
     __table_args__ = (
-        CheckConstraint(
-            "page_no >= 1",
-            name="ck_pages_page_no_positive",
-        ),
         UniqueConstraint(
             "document_id",
             "page_no",
             name="uq_pages_document_page",
         ),
-        Index("ix_pages_document_id", "document_id"),
+        CheckConstraint(
+            "page_no >= 1",
+            name="page_no_positive",
+        ),
     )
 
 
@@ -159,7 +170,7 @@ class ParseFailure(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(),
+        DateTime(timezone=True),
         nullable=False,
         server_default=func.now(),
     )
@@ -168,6 +179,7 @@ class ParseFailure(Base):
         DateTime(timezone=True),
         nullable=False,
         server_default=func.now(),
+        onupdate=func.now(),
     )
 
 
@@ -184,9 +196,15 @@ class LlmCall(Base):
 
     model: Mapped[str] = mapped_column(String(80))
 
-    purpose: Mapped[str] = mapped_column(String(40), server_default="chat")
+    purpose: Mapped[str] = mapped_column(
+        String(40),
+        server_default="chat",
+    )
 
-    prompt_version: Mapped[str] = mapped_column(String(80), server_default="")
+    prompt_version: Mapped[str] = mapped_column(
+        String(80),
+        server_default="",
+    )
 
     status: Mapped[str] = mapped_column(String(10))
 
@@ -198,9 +216,14 @@ class LlmCall(Base):
 
     latency_ms: Mapped[int] = mapped_column(server_default="0")
 
-    cost_inr: Mapped[float] = mapped_column(Numeric(12, 6), server_default="0")
+    cost_inr: Mapped[float] = mapped_column(
+        Numeric(12, 6),
+        server_default="0",
+    )
 
-    fallback_used: Mapped[bool] = mapped_column(server_default=sql_text("false"))
+    fallback_used: Mapped[bool] = mapped_column(
+        server_default=sql_text("false"),
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
