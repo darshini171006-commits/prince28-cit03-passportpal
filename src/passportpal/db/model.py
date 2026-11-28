@@ -1,4 +1,4 @@
-"""Tables, written as Python classes. Alembic turns changes here into migrations."""
+"""Database models for PassportPal."""
 
 from datetime import date, datetime
 from typing import Any
@@ -8,17 +8,19 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
+    Integer,
     MetaData,
     String,
     Text,
     UniqueConstraint,
     func,
-    text,
+)
+from sqlalchemy import (
+    text as sql_text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-# Predictable constraint names, so migrations can drop them later.
 NAMING = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
@@ -36,25 +38,18 @@ class Document(Base):
     __tablename__ = "documents"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-
     external_id: Mapped[str] = mapped_column(String(64), unique=True)
-
     title: Mapped[str] = mapped_column(Text)
-
     source_url: Mapped[str | None] = mapped_column(Text)
-
     licence: Mapped[str | None] = mapped_column(String(200))
-
     doc_type: Mapped[str] = mapped_column(String(50), server_default="record")
-
     published_on: Mapped[date | None]
-
     sha256: Mapped[str] = mapped_column(String(64), index=True)
 
     metadata_: Mapped[dict[str, Any]] = mapped_column(
         "metadata",
         JSONB,
-        server_default=text("'{}'::jsonb"),
+        server_default=sql_text("'{}'::jsonb"),
     )
 
     created_at: Mapped[datetime] = mapped_column(
@@ -75,14 +70,11 @@ class Document(Base):
 
     __table_args__ = (
         Index("ix_documents_doc_type", "doc_type"),
-        # GIN index for faster JSONB metadata queries
         Index(
             "ix_documents_metadata_gin",
             "metadata",
             postgresql_using="gin",
-            postgresql_ops={
-                "metadata": "jsonb_path_ops",
-            },
+            postgresql_ops={"metadata": "jsonb_path_ops"},
         ),
     )
 
@@ -98,8 +90,12 @@ class Page(Base):
     )
 
     page_no: Mapped[int]
-
     text: Mapped[str] = mapped_column(Text)
+
+    headings: Mapped[list[str]] = mapped_column(
+        JSONB,
+        server_default=sql_text("'[]'::jsonb"),
+    )
 
     document: Mapped["Document"] = relationship(back_populates="pages")
 
@@ -113,4 +109,30 @@ class Page(Base):
             "page_no >= 1",
             name="page_no_positive",
         ),
+    )
+
+
+class ParseFailure(Base):
+    __tablename__ = "parse_failures"
+
+    path: Mapped[str] = mapped_column(Text, primary_key=True)
+    sha256: Mapped[str] = mapped_column(String(64))
+    source_url: Mapped[str | None] = mapped_column(Text)
+    reason: Mapped[str] = mapped_column(String(100))
+    detail: Mapped[str] = mapped_column(Text)
+
+    attempts: Mapped[int] = mapped_column(
+        Integer,
+        server_default=sql_text("1"),
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
     )

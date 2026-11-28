@@ -7,8 +7,17 @@ requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.20.1",
     "fastapi>=0.163.1",
+    "httpx>=0.28.1",
+    "pdf2image>=1.17.0",
+    "pillow>=13.0.0",
+    "protego>=0.7.0",
     "psycopg[binary]>=3.3.9",
     "pydantic-settings>=2.16.3",
+    "pymupdf>=2.2",
+    "pypdf>=7.1.1",
+    "pytesseract>=0.3.13",
+    "sqlalchemy[asyncio]>=2.1.9",
+    "trafilatura>=2.4.0",
     "uvicorn[standard]>=0.54.0",
 ]
 
@@ -63,4 +72,4 @@ help = "Integration tests against the Postgres from docker compose (run `make up
 cmd = "pytest tests/integration"
 
 [tool.poe.tasks.test-integration.env.TEST_DATABASE_URL]
-default = "postgresql://app:app@localhost:5433/app_test"
+default = "postgresql://app:app@localhost:5433/app_test" # pragma: allowlist secret -- local-only test database
