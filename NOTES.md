@@ -73,3 +73,68 @@ Two files or lines my coverage report says are never run, and whether they matte
 - Average per answered question: Rs ___ (my Day 1 target: under Rs 0.50)
 
 ### One thing that went wrong today, and how I fixed it
+
+## D09 · Prompt engineering and structured extraction
+
+### Prompt evaluation
+
+Test dataset: `eval/prompt_testset.jsonl`
+
+- Number of test cases: 20
+- Evaluation command: `uv run python scripts/compare_prompts.py`
+
+| Prompt version | Correct | Accuracy |
+|---|---:|---:|
+| classify_v1.md | 20/20 | 100% |
+| classify_v2.md | 20/20 | 100% |
+| classify_v3.md | 20/20 | 100% |
+
+### Structured passport extraction
+
+- Prompt: `prompts/extract_v1.md`
+- Implementation: `src/passportpal/llm/extract.py`
+- Function: `extract_fields()`
+- Output fields:
+  - `case_type`
+  - `document`
+  - `annexure`
+  - `fee`
+  - `condition`
+
+- Missing or unknown values are returned as `None`.
+- Empty input and invalid JSON are rejected.
+- LLM calls use the gateway with purpose `passport_extraction` and prompt version `extract_v1`.
+
+### Extraction unit tests
+
+Command:
+
+```powershell
+uv run pytest -q tests/unit/test_extract.py
+```
+
+Result: 5 passed.
+
+### Overall non-integration tests
+
+Command:
+
+```powershell
+uv run pytest -q --ignore=tests/integration
+```
+
+Result: 41 passed.
+
+### Integration tests
+
+Command:
+
+```powershell
+uv run pytest -q
+```
+
+Result: 36 passed, 4 setup errors.
+
+Reason: `TEST_DATABASE_URL` is not configured for the PostgreSQL integration tests.
+
+Status: Integration tests still need verification with a configured test database.
