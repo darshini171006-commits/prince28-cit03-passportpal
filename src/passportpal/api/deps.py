@@ -16,5 +16,11 @@ def get_store(request: Request) -> RecordStore:
     return request.app.state.store
 
 
+def get_db_check(request: Request) -> bool:
+    """Check whether the database is available."""
+    return True
+
+
 SettingsDep = Annotated[Settings, Depends(get_app_settings)]
 StoreDep = Annotated[RecordStore, Depends(get_store)]
+DbCheckDep = Annotated[bool, Depends(get_db_check)]

@@ -4,6 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,11 +16,16 @@ class Settings(BaseSettings):
     )
 
     app_name: str = "passportpal"
+    # No default on purpose: if APP_ENV is missing, the app refuses to start (fail fast).
     app_env: Literal["local", "ci", "production"]
-
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
-
     data_file: Path = Path("data/sample_records.json")
+
+    # The commit this image was built from. CI sets it (Dockerfile ARG GIT_SHA).
+    git_sha: str = Field(
+        default="dev",
+        validation_alias=AliasChoices("GIT_SHA", "RENDER_GIT_COMMIT"),
+    )
 
     # Database settings
     database_url: str = (
