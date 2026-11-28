@@ -1,97 +1,67 @@
-# Dataset: PassportPal
+﻿# Dataset: PassportPal
 
-PassportPal is a passport assistance project that provides personalised passport document checklists and answers questions about annexures, Tatkal applications, police verification, and passport fees.
+PassportPal provides passport document checklists and answers questions about Indian passport procedures, annexures, Tatkal applications, police verification, and fees.
 
-## Dataset targets
+## Dataset status
 
-- **Start target:** Official passport instructions, FAQs, and annexures.
-- **Full target:** Start target plus passport rules, circulars, and fee schedules, targeting 800+ pages.
-- **Current status:** Initial collection completed. The collected files include official passport-related sources and additional technical reference material. The start target still requires a coverage review to confirm that all required passport instructions, FAQs, and annexures are included.
-
-## Collection method
-
-Documents were collected using `scripts/fetch.py`.
-
-- **Repository:** https://github.com/darshini171006-commits/prince28-cit03-passportpal
-- **User-Agent:** `examate-student-bot`
-- **Maximum concurrent requests:** 4
-- **Delay between requests to the same host:** 0.5 seconds
-- **Robots.txt:** Checked before crawling.
-- **Retries:** Temporary network and server errors are retried with backoff and jitter.
-- **Manifest:** `data/manifest.jsonl` records downloaded files and their metadata.
+- Current corpus: 6 official government PDF documents.
+- Measured coverage: 120 pages.
+- Full target: 800 pages.
+- The 800-page target has not yet been reached.
 
 ## Sources
 
-The main passport information sources are:
+- Passport Seva / Passport India: official passport service information.
+- Ministry of External Affairs (MEA): official passport legislation and rules.
 
-- https://www.passportindia.gov.in/
-- https://www.mea.gov.in/
+Only official passport-related documents are included. Unrelated FastAPI and Government-Service-RAG materials have been removed.
 
-Additional technical reference sources:
+## Collection files
 
-- https://fastapi.tiangolo.com/tutorial/
-- https://github.com/D1vyanshu1/Government-Service-RAG-chatbot
+- Source list: `data/sources.csv`
+- Fetcher: `scripts/fetch.py`
+- Download manifest: `data/manifest.jsonl`
+- Dataset report: `scripts/dataset_report.py`
 
-The FastAPI and Government-Service-RAG materials are technical references. They are not authoritative sources for Indian passport rules or procedures.
-
-## Dataset summary
-
-**Collection snapshot: 23 November 2026**
-
-| Source | Files | Size (MB) | Estimated pages |
-|---|---:|---:|---:|
-| FastAPI technical documentation | 51 | 8.0 | 252 |
-| Government-Service-RAG repository | 2 | 0.0 | 5 |
-| Ministry of External Affairs (MEA) | 1 | 2.4 | 28 |
-| Passport Seva / Passport India | 9 | 4.1 | 78 |
-| **Total** | **63** | **14.5** | **363** |
-
-- Downloaded files: 63
-- Blocked by robots.txt: 0
-- Failed downloads: 0
-- Total collected size: approximately 14.5 MB
-- Estimated pages: 363
-
-*Page counts are estimates. PDF page counts are used where available; text and HTML pages are estimated at one page per 3,000 characters.*
-
-## Licence and usage considerations
-
-The presence of a publicly accessible document does not automatically mean that it is public domain or freely reusable.
-
-- **Passport India:** Official government information. Applicable reuse and reproduction terms require verification.
-- **MEA:** Official government legislation. Applicable reuse and reproduction terms require verification.
-- **FastAPI:** Refer to the licence and terms applicable to the FastAPI documentation and repository.
-- **Government-Service-RAG:** Refer to the repository's licence and terms.
-
-Until permissions are verified, the project should treat these materials as reference sources and link users to the original documents.
-
-Every passport-related answer should provide a link to its original official source wherever possible. The project should not collect unnecessary personal information.
-
-## Dataset inventory
-
-The complete file inventory, including source URLs, file paths, download status, and SHA-256 fingerprints, is maintained in:
-
-`data/manifest.jsonl`
-
-The generated collection report can be refreshed using:
-
-```powershell
-uv run python scripts/dataset_report.py
-```
+Public accessibility does not automatically grant permission to reproduce or redistribute documents. Verify applicable reuse terms and link users to original official sources.
 
 ## Known gaps
 
-- The current collection contains only 10 files from the Passport India and MEA source groups. These need to be checked against the complete list of required passport instructions, FAQs, and annexures.
-- The full target of 800+ pages has not yet been reached. The current dataset contains approximately 363 estimated pages across all sources.
-- Additional official passport circulars, updated fee schedules, and relevant rules may still need to be collected.
-- Some HTML pages do not have a reliable page count because they are web pages rather than PDFs.
-- Reuse permissions for the official government sources have not yet been fully verified.
-- The dataset should be reviewed periodically to identify outdated documents and replace them with current official versions.
+- More official FAQs and usable annexures are needed.
+- Additional circulars and updated fee schedules may be required.
+- Two PDFs need OCR and extraction-quality review.
+- The corpus must be expanded towards 800 pages.
 
 ## Next steps
 
-1. Review the collected Passport India and MEA documents against the start target.
-2. Identify missing official FAQs, annexures, instructions, and relevant passport documents.
-3. Verify applicable source licences and reuse conditions.
-4. Expand the collection towards the full 800+ page target.
-5. Regenerate the dataset report after each collection update.
+1. Collect official Passport Seva FAQs and annexures.
+2. Add verified URLs to `data/sources.csv`.
+3. Fetch and validate documents.
+4. Review OCR and extraction quality.
+5. Regenerate the dataset report.
+
+<!-- generated:start -->
+## Sources (generated 2026-11-28 04:46 UTC by scripts/dataset_report.py)
+
+| Source | Licence / terms | Files | MB | Pages* | How | Fetched | Example URL |
+|---|---|---|---|---|---|---|---|
+| mea | Official government legislation; verify applicable reuse terms | 2 | 2.6 | 42 | http | 2026-11-25 | https://www.mea.gov.in/images/pdf/passport1980.pdf |
+| passportindia | Official government information; reuse permission pending verification | 4 | 4.1 | 78 | http | 2026-11-23 | https://passportindia.gov.in/AppOnlineProject/pdf/Citizen_Charter.pdf |
+
+**Total:** 6 files, 6.6 MB, 120 pages. Not downloaded: 0 blocked by robots.txt, 0 failed.
+
+*Pages = PDF pages, plus one page per 3,000 characters of text or HTML.
+
+## Files (first 6 of 6)
+
+The complete list, with a sha256 fingerprint of every file, is `data/manifest.jsonl`.
+
+| # | Title / file | Source | Pages | Fetched | URL |
+|---|---|---|---|---|---|
+| 1 | The Passports Act 1967 | mea | 14 | 2026-11-25 | https://www.mea.gov.in/Uploads/PublicationDocs/140_The-Passport-Act-1967.pdf |
+| 2 | Passports Rules 1980 | mea | 28 | 2026-11-23 | https://www.mea.gov.in/images/pdf/passport1980.pdf |
+| 3 | Application Form Instruction Booklet | passportindia | 21 | 2026-11-23 | https://www.passportindia.gov.in/AppOnlineProject/pdf/ApplicationformInstructionBooklet-V3.0.pdf |
+| 4 | Citizen Charter | passportindia | 11 | 2026-11-23 | https://passportindia.gov.in/AppOnlineProject/pdf/Citizen_Charter.pdf |
+| 5 | Steps to Apply for Passport Services | passportindia | 29 | 2026-11-23 | https://passportindia.gov.in/AppOnlineProject/pdf/steps_to_apply_for_passport_services.pdf |
+| 6 | Steps to Submit Application at PSK | passportindia | 17 | 2026-11-23 | https://www.passportindia.gov.in/AppOnlineProject/pdf/Steps_to_Submit_an_Application_at_PSK.pdf |
+<!-- generated:end -->
