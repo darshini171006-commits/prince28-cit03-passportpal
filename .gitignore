@@ -1,11 +1,22 @@
-.venv/
+﻿
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Python cache
 __pycache__/
 *.py[cod]
+*.pyc
+
+# Virtual environment
+.venv/
+
+# Test and coverage output
 .pytest_cache/
 .ruff_cache/
 .coverage
 htmlcov/
+
+# Local database
 app.db
-.env
-.env.*
-!.env.example

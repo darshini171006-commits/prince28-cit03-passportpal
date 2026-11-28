@@ -1,0 +1,63 @@
+
+url,source,licence,title
+https://passportindia.gov.in/AppOnlineProject/pdf/Citizen_Charter.pdf,passportindia,"Official government information; reuse permission pending verification",Citizen Charter
+https://www.passportindia.gov.in/AppOnlineProject/pdf/ApplicationformInstructionBooklet-V3.0.pdf,passportindia,"Official government information; reuse permission pending verification",Application Form Instruction Booklet
+https://www.passportindia.gov.in/AppOnlineProject/pdf/Steps_to_Submit_an_Application_at_PSK.pdf,passportindia,"Official government information; reuse permission pending verification",Steps to Submit Application at PSK
+https://www.mea.gov.in/images/pdf/passport1980.pdf,mea,"Official government legislation; verify applicable reuse terms",Passports Rules 1980
+https://www.passportindia.gov.in/psp/FaqApplicationForm,passportindia,"Official government information; reuse permission pending verification",Application Form FAQs
+https://services1.passportindia.gov.in/psp/docAdvisor/attachmentAdvFreshInp,passportindia,"Official government information; reuse permission pending verification",Fresh Passport Document Advisor
+https://www.passportindia.gov.in/psp/ApplyReissue,passportindia,"Official government information; reuse permission pending verification",Passport Reissue Guide
+https://services2.passportindia.gov.in/psp/ListDocuments,passportindia,"Official government information; reuse permission pending verification",List of Required Documents
+https://services1.passportindia.gov.in/psp/Annexures,passportindia,"Official government information; reuse permission pending verification",Annexures and Affidavits
+https://passportindia.gov.in/AppOnlineProject/pdf/steps_to_apply_for_passport_services.pdf,passportindia,"Official government information; reuse permission pending verification",Steps to Apply for Passport Services
+https://fastapi.tiangolo.com/tutorial/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/first-steps/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/path-params/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/query-params/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/body/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/query-params-str-validations/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/path-params-numeric-validations/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/query-param-models/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/body-multiple-params/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/body-fields/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/body-nested-models/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/schema-extra-example/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/extra-data-types/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/cookie-params/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/header-params/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/cookie-param-models/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/header-param-models/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/response-model/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/extra-models/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/response-status-code/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/request-forms/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/request-form-models/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/request-files/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/request-forms-and-files/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/handling-errors/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/path-operation-configuration/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/encoder/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/body-updates/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/dependencies/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/dependencies/classes-as-dependencies/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-in-path-operation-decorators/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/dependencies/global-dependencies/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-with-yield/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/security/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/security/first-steps/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/security/get-current-user/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/middleware/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/cors/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/sql-databases/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/bigger-applications/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/stream-json-lines/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/server-sent-events/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/background-tasks/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/metadata/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/frontend/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/static-files/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/testing/,fastapi,See FastAPI repository licence,
+https://fastapi.tiangolo.com/tutorial/debugging/,fastapi,See FastAPI repository licence,

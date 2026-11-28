@@ -15,17 +15,10 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    # Application settings
     app_name: str = "passportpal"
-    # No default on purpose: if APP_ENV is missing, the app refuses to start (fail fast).
     app_env: Literal["local", "ci", "production"]
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
-    data_file: Path = Path("data/sample_records.json")
-
-    # The commit this image was built from. CI sets it (Dockerfile ARG GIT_SHA).
-    git_sha: str = Field(
-        default="dev",
-        validation_alias=AliasChoices("GIT_SHA", "RENDER_GIT_COMMIT"),
-    )
 
     # Database settings
     database_url: str = (
@@ -33,6 +26,30 @@ class Settings(BaseSettings):
     )
     db_pool_size: int = 5
     db_max_overflow: int = 10
+
+    # LLM gateway (Day 8)
+    # Keys default to empty so tests and CI never need them.
+    gemini_api_key: str = ""
+    groq_api_key: str = ""
+
+    llm_primary_model: str = "gemini-4-hydrogen"
+    llm_fallback_model: str = "openai/gpt-oss-20b"
+
+    # Both providers speak the OpenAI API.
+    llm_primary_base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai"
+    llm_fallback_base_url: str = "https://api.groq.com/openai/v1"
+
+    llm_timeout_seconds: float = 30.0
+
+    usd_inr: float = 95.0  # Rupees per US dollar, for cost estimates.
+
+    prompts_dir: Path = Path("prompts")
+
+    # The commit this image was built from. CI sets it (Dockerfile ARG GIT_SHA).
+    git_sha: str = Field(
+        default="dev",
+        validation_alias=AliasChoices("GIT_SHA", "RENDER_GIT_COMMIT"),
+    )
 
 
 @lru_cache

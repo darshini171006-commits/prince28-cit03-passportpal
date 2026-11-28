@@ -17,14 +17,15 @@ from pypdf import PdfReader
 
 TEXT_TYPES = {".md", ".mdx", ".markdown", ".txt", ".rst", ".adoc", ".sgml", ".py"}
 DATA_TYPES = {".json", ".yaml", ".yml", ".csv", ".xml"}
-PAGE_CHARS = 3000  # files without real pages are cut into "pages" of about this size
-MIN_CHARS_PER_PAGE = 50  # a PDF below this average has no text layer: it is a scan
+
+PAGE_CHARS = 3000
+MIN_CHARS_PER_PAGE = 50
 
 
 @dataclass
 class ParsedPage:
     page_no: int
-    text: str  # clean text, headings as "# ..." lines, tables as Markdown
+    text: str
     headings: list[str] = field(default_factory=list)
     tables: int = 0
 
@@ -32,7 +33,7 @@ class ParsedPage:
 @dataclass
 class ParsedDoc:
     parser: str
-    kind: str  # pdf, html, text or data
+    kind: str
     title: str
     pages: list[ParsedPage]
 
@@ -50,7 +51,7 @@ class ParseError(Exception):
 
 
 def clean_text(text: str) -> str:
-    """The same small repairs for every parser."""
+    """Apply the same small repairs for every parser."""
     text = unicodedata.normalize("NFKC", text)
     text = text.replace("\x00", "").replace("\u00ad", "")
     text = re.sub(r"(?<=[a-z])-\n(?=[a-z])", "", text)
@@ -60,7 +61,7 @@ def clean_text(text: str) -> str:
 
 
 def drop_repeated_lines(pages: list[str]) -> list[str]:
-    """Remove headers and footers: lines that open or close most pages."""
+    """Remove headers and footers that appear on most pages."""
     if len(pages) < 4:
         return pages
 
@@ -70,26 +71,31 @@ def drop_repeated_lines(pages: list[str]) -> list[str]:
     seen: Counter[str] = Counter()
 
     for page in pages:
-        lines = [ln for ln in page.splitlines() if ln.strip()]
-        seen.update({key(ln) for ln in lines[:2] + lines[-2:] if not ln.startswith("#")})
+        lines = [line for line in page.splitlines() if line.strip()]
+        seen.update({key(line) for line in lines[:2] + lines[-2:] if not line.startswith("#")})
 
-    repeated = {k for k, count in seen.items() if count >= 0.6 * len(pages)}
+    repeated = {line_key for line_key, count in seen.items() if count >= 0.6 * len(pages)}
 
     cleaned = []
 
     for page in pages:
         lines = page.splitlines()
-        edge = {i for i, ln in enumerate(lines) if ln.strip()}
+        edge = {i for i, line in enumerate(lines) if line.strip()}
         edge = set(sorted(edge)[:2] + sorted(edge)[-2:])
 
         cleaned.append(
-            "\n".join(ln for i, ln in enumerate(lines) if not (i in edge and key(ln) in repeated))
+            "\n".join(
+                line for i, line in enumerate(lines) if not (i in edge and key(line) in repeated)
+            )
         )
 
     return cleaned
 
 
+# ---------- headings ----------
+
 HEADING = re.compile(r"^(#{1,6}) +(.+?)\s*$")
+FENCE = re.compile(r"^\s*(```|~~~)")
 
 
 def heading_title(raw: str) -> str:
@@ -97,14 +103,11 @@ def heading_title(raw: str) -> str:
     return re.sub(r"\s*\{\s*[#.][^}]*\}\s*$", "", raw).strip()
 
 
-FENCE = re.compile(r"^\s*(```|~~~)")
-
-
 def headings_in(
     text: str,
     in_code: bool = False,
 ) -> tuple[list[tuple[int, str]], bool]:
-    """Find headings, ignoring heading-like lines inside code blocks."""
+    """Find headings while ignoring heading-like lines inside code blocks."""
     found = []
 
     for line in text.splitlines():
@@ -146,15 +149,14 @@ def finish(
     title: str,
     texts: list[str],
 ) -> ParsedDoc:
-    texts = drop_repeated_lines([clean_text(t) for t in texts])
-    texts = [clean_text(t) for t in texts]
+    """Clean extracted text and build the final document."""
+    texts = drop_repeated_lines([clean_text(text) for text in texts])
+    texts = [clean_text(text) for text in texts]
 
     if not any(texts):
         raise ParseError("empty", "no text after cleaning")
 
     found, _ = headings_in("\n".join(texts))
-
-    # A document's first heading beats file metadata.
     document_title = found[0][1] if found else title
 
     return ParsedDoc(
@@ -165,11 +167,11 @@ def finish(
     )
 
 
-# ---------- PDF, parser 1: PyMuPDF ----------
+# ---------- PDF helpers ----------
 
 
 def _body_size(doc: pymupdf.Document) -> float:
-    """The most common font size, counted by characters."""
+    """Find the most common font size, counted by characters."""
     sizes: Counter[float] = Counter()
 
     for page in list(doc)[:30]:
@@ -227,14 +229,12 @@ def _table_to_markdown(table) -> str:
         if row.strip().startswith("|")
     ]
 
-    # A Markdown table needs a header, separator and at least one data row.
     if len(rows) < 3:
         return markdown
 
     header = rows[0]
     data_rows = rows[2:]
 
-    # Keep columns that contain at least one non-empty data cell.
     keep = [
         col for col in range(len(header)) if any(col < len(row) and row[col] for row in data_rows)
     ]
@@ -247,6 +247,9 @@ def _table_to_markdown(table) -> str:
     return "\n".join("|" + "|".join(row) + "|" for row in rows)
 
 
+# ---------- PDF, parser 1: PyMuPDF ----------
+
+
 def parse_pdf_pymupdf(path: Path) -> ParsedDoc:
     doc = _open_pdf(path)
     body = _body_size(doc)
@@ -255,7 +258,6 @@ def parse_pdf_pymupdf(path: Path) -> ParsedDoc:
     chars = 0
 
     for page in doc:
-        # Looking for tables is slow, so only do it on pages with ruled lines.
         tables = list(page.find_tables().tables) if len(page.get_cdrawings()) >= 4 else []
 
         used: set[int] = set()
@@ -266,6 +268,7 @@ def parse_pdf_pymupdf(path: Path) -> ParsedDoc:
                 continue
 
             rect = pymupdf.Rect(block["bbox"])
+
             inside = next(
                 (i for i, table in enumerate(tables) if rect.intersects(table.bbox)),
                 None,
@@ -289,9 +292,7 @@ def parse_pdf_pymupdf(path: Path) -> ParsedDoc:
                 bold = all(span["flags"] & 16 for span in line["spans"])
 
                 level = _heading_level(text, size, bold, body)
-
                 out.append(f"{'#' * level} {text}" if level else text)
-
                 chars += len(text)
 
             out.append("")
@@ -312,11 +313,14 @@ def parse_pdf_pymupdf(path: Path) -> ParsedDoc:
     )
 
 
+# ---------- PDF, parser 2: OCR ----------
+
+
 def parse_pdf_ocr(
     path: Path,
     language: str = "eng",
 ) -> ParsedDoc:
-    """For scans: read pixels with Tesseract, which must be installed."""
+    """Read scanned PDF pages using Tesseract OCR."""
     doc = _open_pdf(path)
 
     try:
@@ -336,7 +340,7 @@ def parse_pdf_ocr(
     return finish(f"ocr-{language}", "pdf", "", texts)
 
 
-# ---------- PDF, parser 2: pypdf ----------
+# ---------- PDF, parser 3: pypdf ----------
 
 
 def parse_pdf_pypdf(path: Path) -> ParsedDoc:
@@ -356,7 +360,7 @@ def parse_pdf_pypdf(path: Path) -> ParsedDoc:
     if not texts:
         raise ParseError("empty", "the PDF has no pages")
 
-    if sum(len(t) for t in texts) < MIN_CHARS_PER_PAGE * len(texts):
+    if sum(len(text) for text in texts) < MIN_CHARS_PER_PAGE * len(texts):
         raise ParseError(
             "no_text_layer",
             f"almost no text on {len(texts)} pages: needs OCR",
@@ -374,7 +378,6 @@ def parse_html(path: Path) -> ParsedDoc:
         errors="replace",
     )
 
-    # Keep article content and remove menus, footers and scripts.
     markdown = trafilatura.extract(
         html,
         output_format="markdown",
@@ -467,6 +470,7 @@ def split_pages(
 
 def parse_text(path: Path) -> ParsedDoc:
     suffix = path.suffix.lower()
+
     text = path.read_text(
         encoding="utf-8",
         errors="replace",
@@ -487,6 +491,8 @@ def parse_text(path: Path) -> ParsedDoc:
         split_pages(markup_to_markdown(text, suffix)),
     )
 
+
+# ---------- file type selection ----------
 
 PDF_PARSERS = {
     "pymupdf": parse_pdf_pymupdf,

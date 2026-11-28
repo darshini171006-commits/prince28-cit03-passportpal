@@ -10,11 +10,12 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 from passportpal.config import get_settings
 from passportpal.db.model import Base
+from passportpal.db.url import to_asyncpg_url
 
 config = context.config
 
-# Get database URL from PassportPal settings.
-database_url = get_settings().database_url
+settings = get_settings()
+database_url = to_asyncpg_url(settings.database_url)
 
 config.set_main_option(
     "sqlalchemy.url",
@@ -28,10 +29,8 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    url = config.get_main_option("sqlalchemy.url")
-
     context.configure(
-        url=url,
+        url=database_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},

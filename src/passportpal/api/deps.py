@@ -1,26 +1,60 @@
 """Dependencies: endpoints ask for these instead of building them."""
 
+import asyncio
+from collections.abc import AsyncIterator
 from typing import Annotated
 
 from fastapi import Depends, Request
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from passportpal.config import Settings
-from passportpal.store import RecordStore
+from passportpal.db.llm_calls import UsageRepository
+from passportpal.db.repository import DocumentRepository
+from passportpal.llm.gateway import LLMGateway
 
 
 def get_app_settings(request: Request) -> Settings:
     return request.app.state.settings
 
 
-def get_store(request: Request) -> RecordStore:
-    return request.app.state.store
+async def get_session(request: Request) -> AsyncIterator[AsyncSession]:
+    """One session per request, closed automatically afterwards."""
+    async with request.app.state.sessionmaker() as session:
+        yield session
 
 
-def get_db_check(request: Request) -> bool:
-    """Check whether the database is available."""
-    return True
+async def get_repo(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> DocumentRepository:
+    return DocumentRepository(session)
+
+
+async def check_db(request: Request) -> bool:
+    """Check whether the database responds to SELECT 1 within 2 seconds."""
+    try:
+        async with request.app.state.engine.connect() as conn:
+            await asyncio.wait_for(
+                conn.execute(text("SELECT 1")),
+                timeout=2,
+            )
+        return True
+    except Exception:
+        return False
+
+
+def get_gateway(request: Request) -> LLMGateway:
+    return request.app.state.gateway
+
+
+async def get_usage_repo(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> UsageRepository:
+    return UsageRepository(session)
 
 
 SettingsDep = Annotated[Settings, Depends(get_app_settings)]
-StoreDep = Annotated[RecordStore, Depends(get_store)]
-DbCheckDep = Annotated[bool, Depends(get_db_check)]
+GatewayDep = Annotated[LLMGateway, Depends(get_gateway)]
+UsageDep = Annotated[UsageRepository, Depends(get_usage_repo)]
+RepoDep = Annotated[DocumentRepository, Depends(get_repo)]
+DbCheckDep = Annotated[bool, Depends(check_db)]
