@@ -12,6 +12,9 @@ __pycache__/
 # Virtual environment
 .venv/
 
+# Day 09 prompt evaluation cache
+eval/.prompt_cache.json
+
 # Test and coverage output
 .pytest_cache/
 .ruff_cache/

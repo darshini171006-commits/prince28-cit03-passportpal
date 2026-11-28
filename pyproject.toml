@@ -7,7 +7,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.20.1",
-    "asyncpg>=0.31.0",
+    "asyncpg>=0.32.0",
     "fastapi>=0.163.1",
     "httpx>=0.28.1",
     "pdf2image>=1.17.0",

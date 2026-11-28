@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     db_pool_size: int = 5
     db_max_overflow: int = 10
 
-    # LLM gateway (Day 8)
+    # LLM gateway
     # Keys default to empty so tests and CI never need them.
     gemini_api_key: str = ""
     groq_api_key: str = ""
@@ -40,7 +40,6 @@ class Settings(BaseSettings):
     llm_fallback_base_url: str = "https://api.groq.com/openai/v1"
 
     llm_timeout_seconds: float = 30.0
-
     usd_inr: float = 95.0  # Rupees per US dollar, for cost estimates.
 
     prompts_dir: Path = Path("prompts")
